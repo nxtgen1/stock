@@ -1,0 +1,50 @@
+metadata:
+  name: grafana-ui
+  namespace: monitoring
+  labels:
+    app: grafana
+    company.com/compute: serverless
+  annotations:
+    fluxcd.io/automated: "true"
+    fluxcd.io/tag.monitoring: glob:*.*
+
+service:
+  enabled: true
+  type: NodePort
+
+adminUser: admin
+adminPassword: admin
+
+image:
+  repository: company.jfrog.io/grafana/grafana
+  tag: 10.0.3
+  pullPolicy: Always
+
+grafana.ini:
+  log:
+    level: debug
+    mode: console
+
+replicas: 2
+
+autoscaling:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 6
+  targetCPU: 60
+
+resources:
+  requests:
+    cpu: 1000m
+    memory: 2048Mi
+  limits:
+    cpu: 2000m
+    memory: 4096Mi
+
+podLabels:
+  app: grafana
+  company.com/compute: serverless
+
+imagePullSecrets:
+  - name: company-image-pull-secret
+
